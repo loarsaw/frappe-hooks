@@ -1,0 +1,47 @@
+{
+  "name": "@rustedcompiler/frappe-hooks",
+  "version": "0.0.1",
+  "description": "Reusable SWR + Axios HTTP hooks for React",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.9.0",
+    "swr": "^2.3.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/react-http-hooks.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "hooks",
+    "swr",
+    "axios",
+    "http",
+    "use-http",
+    "fetch"
+  ]
+}
