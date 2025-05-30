@@ -1,6 +1,6 @@
 {
   "name": "@rustedcompiler/frappe-hooks",
-  "version": "0.0.2-beta.6",
+  "version": "0.0.3",
   "description": "Reusable SWR + Axios HTTP hooks for React",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

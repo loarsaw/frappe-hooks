@@ -26,7 +26,7 @@ export const frappeInstance = new FrappeClient({ baseURL: "https://abc.com" , to
 
 
 ```
-## Reading Document
+## Example Usage
 ```jsx
 // get all documents
 await frappeInstance.getAllDocuments(docType);
