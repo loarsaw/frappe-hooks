@@ -13,10 +13,27 @@ A lightweight react.js wrapper for the [Frappe](https://docs.frappe.io/framework
 
 ```bash
 npm install @rustedcompiler/frappe-hooks
+```
 
 ```jsx
 import { FrappeClient } from '@rustedcompiler/frappe-hooks'
 
 export const frappeInstance = new FrappeClient({ baseURL: "https://abc.com/api/resource" })
 
+```
+## Reading Document
+```jsx
+// get all documents
+await frappeInstance.getAllDocuments(docType);
+
+// read document
+await frappeInstance.readDocument(docType, documentId);
+
+//updating document
+await frappeInstance.updateDocument(docType, documentId, {
+  under_maintenance: 1,
+});
+
+//delete document
+await frappeInstance.deleteDocument(docType, documentId);
 ```
