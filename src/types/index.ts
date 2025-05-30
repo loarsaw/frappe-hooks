@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 
-export interface IFrappeInstance extends AxiosRequestConfig {
+export interface IFrappeInstance {
   baseURL: string,
   token?: string
 }

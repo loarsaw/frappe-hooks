@@ -11,7 +11,7 @@ export class FrappeClient {
       this.tokenProvided = true
     }
     this.axiosInstance = axios.create({
-      baseURL: options.baseURL,
+      baseURL: options.baseURL.replace(/\/$/, ''),
       withCredentials: true,
       headers: {
         ...(options.token && { Authorization: `token ${options.token}` }),
