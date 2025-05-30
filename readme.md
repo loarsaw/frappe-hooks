@@ -21,6 +21,10 @@ import { FrappeClient } from '@rustedcompiler/frappe-hooks'
 // only put the server url
 export const frappeInstance = new FrappeClient({ baseURL: "https://abc.com" })
 
+// only put the server url
+export const frappeInstance = new FrappeClient({ baseURL: "https://abc.com" , token:"api_key:api_secret"})
+
+
 ```
 ## Reading Document
 ```jsx
