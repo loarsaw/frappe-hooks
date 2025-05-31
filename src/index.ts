@@ -21,12 +21,13 @@ export class FrappeClient {
     })
   }
   public static getInstance(options?: IFrappeInstance): FrappeClient {
-    if (options == undefined) return FrappeClient.instance
     if (!FrappeClient.instance) {
-      if (!options.baseURL) {
-        throw new Error("Server URL not provided")
+      if (options) {
+        if (!options.baseURL) {
+          throw new Error("Server URL not provided")
+        }
+        FrappeClient.instance = new FrappeClient({ baseURL: options.baseURL, token: options.token })
       }
-      FrappeClient.instance = new FrappeClient({ baseURL: options.baseURL, token: options.token })
     }
     return FrappeClient.instance
   }
@@ -43,6 +44,11 @@ export class FrappeClient {
     } else {
       return null
     }
+  }
+
+  async getCurrentUser() {
+    const user = await this.updateUser()
+    return user
   }
 
   async loginWithPassword(email: string, password: string) {

@@ -28,6 +28,7 @@ export const frappeInstance = new FrappeClient({ baseURL: "https://abc.com" , to
 ```
 ## Example Usage
 ```jsx
+
 // get all documents
 await frappeInstance.getAllDocuments(docType);
 
@@ -41,4 +42,19 @@ await frappeInstance.updateDocument(docType, documentId, {
 
 //delete document
 await frappeInstance.deleteDocument(docType, documentId);
+```
+
+## Getting Current User
+```jsx
+
+useEffect(()=>{
+  getCurrentUser()
+} , [])
+
+async function getCurrentUser(){
+  const user = await frappeInstance.getCurrentUser();
+  return user
+}
+
+
 ```
