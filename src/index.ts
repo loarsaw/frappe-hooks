@@ -1,10 +1,12 @@
 import useSWR, { SWRConfiguration, SWRResponse, mutate } from 'swr';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { IFrappeInstance } from './types';
+import { deleteAllCookies } from './utils/utils';
 
 export class FrappeClient {
   private axiosInstance: AxiosInstance | null = null;
   private tokenProvided: boolean = false
+  private currentUser: string | null = null
   private static instance: FrappeClient;
   constructor(options: IFrappeInstance) {
     if (options.token) {
@@ -27,6 +29,20 @@ export class FrappeClient {
       FrappeClient.instance = new FrappeClient({ baseURL: options.baseURL, token: options.token })
     }
     return FrappeClient.instance
+  }
+  logoutUser() {
+    this.currentUser == null
+    deleteAllCookies()
+  }
+
+  async updateUser() {
+    const response = await this.axiosInstance?.post("/api/method/frappe.auth.get_logged_user")
+    if (response?.data) {
+      this.currentUser = response.data.message
+      return response.data.message
+    } else {
+      return null
+    }
   }
 
   async loginWithPassword(email: string, password: string) {

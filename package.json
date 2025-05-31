@@ -1,6 +1,6 @@
 {
   "name": "@rustedcompiler/frappe-hooks",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Reusable SWR + Axios HTTP hooks for React",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -10,6 +10,11 @@
       "require": "./dist/index.js",
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./auth": {
+      "require": "./dist/hooks/useAuth.js",
+      "import": "./dist/hooks/useAuth.js",
+      "types": "./dist/hooks/useAuth.d.ts"
     }
   },
   "files": [
