@@ -2,7 +2,7 @@ import { getInstanceManager } from ".."
 import { useEffect, useState } from 'react'
 export const useAuth = () => {
     const instance = getInstanceManager()
-    const [currentUser, setCurrentUser] = useState(instance.updateUser())
+    const [currentUser, setCurrentUser] = useState()
     useEffect(() => {
         if (instance) {
             updateCurrentUser()
