@@ -81,7 +81,7 @@ export class FrappeClient {
       return null
     }
   }
-  async getDocument(docType: string, documentId: string, data: any) {
+  async getDocument(docType: string, documentId: string) {
     const response = await this.axiosInstance?.get(`/api/resource/${docType}/${documentId}`)
     if (response?.data) {
       return response.data

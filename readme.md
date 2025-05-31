@@ -29,11 +29,11 @@ export const frappeInstance = new FrappeClient({ baseURL: "https://abc.com" , to
 ## Example Usage
 ```jsx
 
-// get all documents
+// get all documents within a docType
 await frappeInstance.getAllDocuments(docType);
 
-// read document
-await frappeInstance.readDocument(docType, documentId);
+// get single document
+await frappeInstance.getDocument(docType, documentId);
 
 //updating document
 await frappeInstance.updateDocument(docType, documentId, {
