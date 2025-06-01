@@ -1,13 +1,14 @@
-import useSWR, { SWRConfiguration, SWRResponse, mutate } from 'swr';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { IFrappeInstance } from './types';
-import { deleteAllCookies } from './utils/utils';
-
+import { IFrappeInstance, IListingBuilder } from './types';
+import { listingBuilder } from './utils/url-builder';
+export * from "./lib/provider/FrappeProvider"
 export class FrappeClient {
   private axiosInstance: AxiosInstance | null = null;
   private tokenProvided: boolean = false
   private currentUser: string | null = null
   private static instance: FrappeClient;
+  private initialized: boolean = false;
+  private static options: IFrappeInstance = { baseURL: "", token: "" };
   constructor(options: IFrappeInstance) {
     if (options.token) {
       this.tokenProvided = true
@@ -19,21 +20,37 @@ export class FrappeClient {
         ...(options.token && { Authorization: `token ${options.token}` }),
       },
     })
+    this.initialized = true
+    FrappeClient.options.baseURL = options.baseURL
+    FrappeClient.options.token = options.token
   }
+
   public static getInstance(options?: IFrappeInstance): FrappeClient {
     if (!FrappeClient.instance) {
-      if (options) {
-        if (!options.baseURL) {
-          throw new Error("Server URL not provided")
+      if (options == undefined) {
+        if (FrappeClient.options.baseURL !== '') {
+          console.log("inside FrappeClient.options")
+          if (FrappeClient.options.baseURL == "") {
+            throw new Error("Server URL not provided")
+          }
         }
-        FrappeClient.instance = new FrappeClient({ baseURL: options.baseURL, token: options.token })
+      } else {
+        if (options.baseURL !== '') {
+          if (options.baseURL == "") {
+            throw new Error("Server URL not provided")
+          }
+        }
       }
+      FrappeClient.instance = new FrappeClient({ baseURL: FrappeClient.options.baseURL, token: FrappeClient.options.token })
     }
     return FrappeClient.instance
   }
+
+  getInitialized() {
+    return this.initialized
+  }
   logoutUser() {
     this.currentUser == null
-    deleteAllCookies()
   }
 
   async updateUser() {
@@ -62,6 +79,7 @@ export class FrappeClient {
       return null
     }
   }
+
   async createDocument(docType: string, data: any) {
     const requestBody = {
       ...data
@@ -73,14 +91,31 @@ export class FrappeClient {
       return null
     }
   }
-  async getAllDocuments(docType: string, data: any) {
-    const response = await this.axiosInstance?.get(`/api/resource/${docType}`)
+
+  async getAllDocuments(docType: string, pagination: IListingBuilder) {
+    const m_url = listingBuilder(`/api/resource/${docType}`, { limit_page_length: pagination.limit_page_length, limit_start: pagination.limit_start, f_array: pagination.f_array })
+    console.log(pagination.f_array, "a")
+    const response = await this.axiosInstance?.get(m_url)
     if (response?.data) {
       return response.data
     } else {
       return null
     }
   }
+
+  getAxiosInstance() {
+    return this.axiosInstance
+  }
+
+  async logout() {
+    const response = await this.axiosInstance?.get(`/api/method/logout`)
+    if (response?.data) {
+      return response.data
+    } else {
+      return null
+    }
+  }
+
   async getDocument(docType: string, documentId: string) {
     const response = await this.axiosInstance?.get(`/api/resource/${docType}/${documentId}`)
     if (response?.data) {
@@ -101,6 +136,7 @@ export class FrappeClient {
       return null
     }
   }
+
   async deleteDocument(docType: string, documentId: string) {
     const response = await this.axiosInstance?.delete(`/api/resource/${docType}/${documentId}`)
     if (response?.data) {
@@ -109,13 +145,20 @@ export class FrappeClient {
       return null
     }
   }
-
 }
 
 export function getInstanceManager(): FrappeClient {
   return FrappeClient.getInstance()
 }
 
-// Re-export types for convenience
+export function getUtils(): { axiosInstance: AxiosInstance | null, initialized: boolean } {
+  const client = FrappeClient.getInstance()
+  console.log(client, FrappeClient, "sus")
+  const axiosInstance = client?.getAxiosInstance()
+  const initialized = client?.getInitialized()
+  return {
+    axiosInstance, initialized
+  }
+}
 export type { SWRConfiguration, SWRResponse } from 'swr';
-export type { AxiosRequestConfig, AxiosResponse } from 'axios';
+export type { AxiosRequestConfig, AxiosResponse } from 'axios'

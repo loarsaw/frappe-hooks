@@ -1,41 +1,22 @@
-import { FrappeClient, getInstanceManager } from ".."
-import { useEffect, useState } from 'react'
+import { useState } from "react"
+import { useFrappeClient } from "./useFrappeClient"
 
 export const useAuth = () => {
-    const [frappeInstance, setFrappeInstance] = useState<FrappeClient | null>(null)
-    const [currentUser, setCurrentUser] = useState<any>(null)
-    console.log(frappeInstance)
-    useEffect(() => {
-        let retries = 5
-        const retryDelay = 300 // ms
-        const tryGetInstance = async () => {
-            let instance = getInstanceManager()
+    const [currentUser, setCurrentUser] = useState<string | null>()
+    const { axiosInstance } = useFrappeClient()
 
-            while (!instance && retries > 0) {
-                await new Promise(res => setTimeout(res, retryDelay))
-                instance = getInstanceManager()
-                retries--
-            }
-
-            if (instance) {
-                setFrappeInstance(instance)
-                updateCurrentUser(instance)
-            }
-        }
-
-        tryGetInstance()
-    }, [])
-
-    async function logoutUser() {
-        frappeInstance?.logoutUser()
-    }
-
-    async function updateCurrentUser(instance: FrappeClient) {
-        const data = await instance.updateUser()
-        if (data) {
-            setCurrentUser(data)
+    async function loginWithPassword(email: string, password: string) {
+        const response = await axiosInstance?.post(`/api/method/login`, {
+            usr: email,
+            pwd: password
+        })
+        if (response?.data) {
+            return response.data
+        } else {
+            return null
         }
     }
 
-    return { currentUser, logoutUser }
+
+    return { loginWithPassword, currentUser }
 }
