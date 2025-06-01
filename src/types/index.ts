@@ -6,5 +6,5 @@ export interface IFrappeInstance {
 }
 
 export interface IListingBuilder {
-  limit_page_length?: number | null, limit_start?: number | null, f_array?: string[]
+  limit_page_length?: number | null, limit_start?: number | null, fieldsArray?: string[]
 }

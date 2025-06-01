@@ -2,6 +2,9 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { IFrappeInstance, IListingBuilder } from './types';
 import { listingBuilder } from './utils/url-builder';
 export * from "./lib/provider/FrappeProvider"
+export * from "./hooks/useDocuments"
+export * from "./hooks/useDocument"
+
 export class FrappeClient {
   private axiosInstance: AxiosInstance | null = null;
   private tokenProvided: boolean = false
@@ -29,7 +32,6 @@ export class FrappeClient {
     if (!FrappeClient.instance) {
       if (options == undefined) {
         if (FrappeClient.options.baseURL !== '') {
-          console.log("inside FrappeClient.options")
           if (FrappeClient.options.baseURL == "") {
             throw new Error("Server URL not provided")
           }
@@ -93,8 +95,7 @@ export class FrappeClient {
   }
 
   async getAllDocuments(docType: string, pagination: IListingBuilder) {
-    const m_url = listingBuilder(`/api/resource/${docType}`, { limit_page_length: pagination.limit_page_length, limit_start: pagination.limit_start, f_array: pagination.f_array })
-    console.log(pagination.f_array, "a")
+    const m_url = listingBuilder(`/api/resource/${docType}`, { limit_page_length: pagination.limit_page_length, limit_start: pagination.limit_start, fieldsArray: pagination.fieldsArray })
     const response = await this.axiosInstance?.get(m_url)
     if (response?.data) {
       return response.data
@@ -153,7 +154,6 @@ export function getInstanceManager(): FrappeClient {
 
 export function getUtils(): { axiosInstance: AxiosInstance | null, initialized: boolean } {
   const client = FrappeClient.getInstance()
-  console.log(client, FrappeClient, "sus")
   const axiosInstance = client?.getAxiosInstance()
   const initialized = client?.getInitialized()
   return {
