@@ -41,7 +41,7 @@ export function useDocument<T = any>(docType: string, documentId: string, enable
             };
         }
 
-    }, [docType, enabled, refetch]);
+    }, [docType, enabled, refetch, documentId]);
 
     async function updateDocument(docType: string, documentId: string, updated_data: T) {
         const response = await axiosInstance?.put(`/api/resource/${docType}/${documentId}`, updated_data)

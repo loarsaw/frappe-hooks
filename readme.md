@@ -1,19 +1,20 @@
-
 # @rustedcompiler/frappe-hooks
 
-A lightweight React.js wrapper for the [Frappe](https://docs.frappe.io/framework/user/en/api/rest) REST API.
+A lightweight React.js wrapper for the [Frappe REST API](https://docs.frappe.io/framework/user/en/api/rest), enabling easy integration with Frappe backend in your React applications.
 
-## Features
+## ✅ Features
 
-- ✅ Easy login using username and password or API key/secret  
-- ✅ Convenient methods for all standard REST operations  
-- ❌ File upload/download support (coming soon)
+- Easy login with username/password or API key/secret  
+- Hooks for standard REST operations (GET, POST, PUT, DELETE)  
+- File upload/download support *(coming soon)*
 
-## Installation
+---
+
+## 📦 Installation
 
 ```bash
 npm install @rustedcompiler/frappe-hooks
-```
+
 
 ## Initialization
 
@@ -24,17 +25,19 @@ import { FrappeProvider } from '@rustedcompiler/frappe-hooks';
 
 function App({ children }) {
   return (
-    <FrappeProvider options={{ baseURL: 'https://asa.aksla.com'   
-    // if using token 
-    token: "api_key:api_secret"  }}>
+    <FrappeProvider
+      options={{
+        baseURL: 'https://asa.aksla.com',
+        // Optional if using token authentication
+        token: 'api_key:api_secret',
+      }}
+    >
       <body>{children}</body>
     </FrappeProvider>
   );
 }
+
 ```
-
-## Manual Instance (Optional)
-
 
 
 ## Example Usage
@@ -42,48 +45,43 @@ function App({ children }) {
 ```jsx
 import {useDocuments , useDocument } from "@rustedcompiler/frappe-hooks"
 // Get all documents of a specific DocType
+import { useDocuments } from '@rustedcompiler/frappe-hooks';
+
 const { data } = useDocuments({
-    docType: docType,
-    // if you'd wait for some operations to get completed before call it 
-    enabled: true,
-  });
-// pagination 
- const { data } = useDocuments({
-    docType: docType,
-    pagination: {
-      fieldsArray: ['email', 'full_name'],
-      limit_page_length: 40,
-      limit_start: 10,
-    },
-    enabled: true,
-  });
+  docType: 'User',
+  enabled: true,
+});
+
+// query 
+const { data } = useDocuments({
+  docType: 'User',
+  query: {
+    fieldsArray: ['email', 'full_name'],
+    limit_page_length: 40,
+    limit_start: 10,
+  },
+  enabled: true,
+});
 
 // Get a single document
-  const { data } = useDocument(
-    docType,
-    documentId
-  );
+import { useDocument } from '@rustedcompiler/frappe-hooks';
+
+const { data } = useDocument('User', 'USER-ID');
 
 
 // Update a document
-const { updateDocument } = useDocument(
-   docType,
-    documentId
-  );
+const { updateDocument } = useDocument('User', 'USER-ID');
 
- await updateDocument(docType, documentId, {
-  // data
+await updateDocument('User', 'USER-ID', {
   score: 0,
-})
+});
 
 
 // Delete a document
-const {  deleteDocument } = useDocument(
-   docType,
-   documentId
-  );
+const { deleteDocument } = useDocument('User', 'USER-ID');
 
- await deleteDocument(docType , documentId)
+await deleteDocument('User', 'USER-ID');
+
 ```
 
 ## Getting the Current User
@@ -93,7 +91,11 @@ import { useEffect } from 'react';
 import { useAuth } from '@rustedcompiler/frappe-hooks';
 
 function MyComponent() {
- const { loginWithPassword , currentUser } = useAuth();
+  const { loginWithPassword, currentUser } = useAuth();
 
+  useEffect(() => {
+    console.log(currentUser);
+  }, [currentUser]);
 }
+
 ```

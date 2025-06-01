@@ -1,22 +1,12 @@
 import { useEffect, useState } from "react";
 import axios, { CancelTokenSource } from "axios";
 import { useFrappeClient } from "./useFrappeClient";
-import { IListingBuilder } from "../types";
+import { InputData, UseFetchResult } from "../types";
 import { listingBuilder } from "../utils/url-builder";
 
-interface UseFetchResult<T> {
-    data: T | null;
-    isLoading: boolean;
-    error: string | null;
-}
 
-interface InputData {
-    docType: string
-    pagination?: IListingBuilder | undefined,
-    enabled?: boolean
-}
 
-export function useDocuments<T = any>({ docType, pagination, enabled = true }: InputData): UseFetchResult<T> {
+export function useDocuments<T = any>({ docType, query, enabled = true }: InputData): UseFetchResult<T> {
     const [data, setData] = useState<T | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [docTypeUrl, setDocTypeUrl] = useState<string | null>(null)
@@ -31,10 +21,10 @@ export function useDocuments<T = any>({ docType, pagination, enabled = true }: I
 
             setIsLoading(true);
             setError(null);
-            if (pagination == undefined) {
+            if (query == undefined) {
                 setDocTypeUrl(`/api/resource/${docType}`)
             } else {
-                setDocTypeUrl(listingBuilder(`/api/resource/${docType}`, { limit_page_length: pagination.limit_page_length, limit_start: pagination.limit_start, fieldsArray: pagination.fieldsArray }))
+                setDocTypeUrl(listingBuilder(`/api/resource/${docType}`, { limit_page_length: query.limit_page_length, limit_start: query.limit_start, fieldsArray: query.fieldsArray }))
             }
             if (docTypeUrl)
                 axiosInstance?.get<T>(docTypeUrl, { cancelToken: source.token })
@@ -55,7 +45,7 @@ export function useDocuments<T = any>({ docType, pagination, enabled = true }: I
             };
         }
 
-    }, [docType, docTypeUrl, enabled]);
+    }, [docType, docTypeUrl, enabled, query?.limit_start]);
 
     return { data, isLoading, error };
 }

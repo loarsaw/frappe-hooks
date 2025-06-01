@@ -95,8 +95,8 @@ export class FrappeClient {
     }
   }
 
-  async getAllDocuments(docType: string, pagination: IListingBuilder) {
-    const m_url = listingBuilder(`/api/resource/${docType}`, { limit_page_length: pagination.limit_page_length, limit_start: pagination.limit_start, fieldsArray: pagination.fieldsArray })
+  async getAllDocuments(docType: string, query: IListingBuilder) {
+    const m_url = listingBuilder(`/api/resource/${docType}`, { limit_page_length: query.limit_page_length, limit_start: query.limit_start, fieldsArray: query.fieldsArray })
     const response = await this.axiosInstance?.get(m_url)
     if (response?.data) {
       return response.data
