@@ -14,7 +14,7 @@ A lightweight React.js wrapper for the [Frappe REST API](https://docs.frappe.io/
 
 ```bash
 npm install @rustedcompiler/frappe-hooks
-
+```
 
 ## Initialization
 
