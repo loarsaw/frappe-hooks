@@ -4,6 +4,7 @@ import { listingBuilder } from './utils/url-builder';
 export * from "./lib/provider/FrappeProvider"
 export * from "./hooks/useDocuments"
 export * from "./hooks/useDocument"
+export * from "./hooks/useAuth"
 
 export class FrappeClient {
   private axiosInstance: AxiosInstance | null = null;

@@ -16,7 +16,7 @@ export function useDocument<T = any>(docType: string, documentId: string, enable
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { axiosInstance } = useFrappeClient()
-
+    const [refetch, setRefetch] = useState(Date.now())
     useEffect(() => {
         if (!docType || !documentId) return;
         if (enabled) {
@@ -41,11 +41,12 @@ export function useDocument<T = any>(docType: string, documentId: string, enable
             };
         }
 
-    }, [docType, enabled]);
+    }, [docType, enabled, refetch]);
 
     async function updateDocument(docType: string, documentId: string, updated_data: T) {
         const response = await axiosInstance?.put(`/api/resource/${docType}/${documentId}`, updated_data)
         if (response?.data) {
+            setRefetch(Date.now())
             return response.data
         } else {
             return null
