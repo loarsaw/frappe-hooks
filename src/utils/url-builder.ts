@@ -8,7 +8,7 @@ export function listingBuilder(url: string, data: IListingBuilder) {
         a_url = `${url}?limit_start=${String(data.limit_start)}`
     } if (data.fieldsArray && data.fieldsArray?.length >= 0) {
         const encodedFields = encodeURIComponent(JSON.stringify(data.fieldsArray))
-        a_url = `${a_url}&fields=${encodedFields}`
+        a_url = `${url}&fields=${encodedFields}`
     } else {
         a_url = url
     }

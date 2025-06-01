@@ -42,19 +42,28 @@ function App({ children }) {
 
 ## Example Usage
 
+
+### Getting all Documents
+
 ```jsx
 import {useDocuments , useDocument } from "@rustedcompiler/frappe-hooks"
 // Get all documents of a specific DocType
 import { useDocuments } from '@rustedcompiler/frappe-hooks';
 
 const { data } = useDocuments({
-  docType: 'User',
+  docType: docType,
   enabled: true,
 });
 
+```
+
+### Paginating Data
+
+```jsx
+
 // query 
 const { data } = useDocuments({
-  docType: 'User',
+  docType: docType,
   query: {
     fieldsArray: ['email', 'full_name'],
     limit_page_length: 40,
@@ -63,24 +72,32 @@ const { data } = useDocuments({
   enabled: true,
 });
 
+```
+
+### Fetching a Single Document 
+```jsx
 // Get a single document
 import { useDocument } from '@rustedcompiler/frappe-hooks';
 
-const { data } = useDocument('User', 'USER-ID');
+const { data } = useDocument(docType, documentId);  
 
+```
 
+```jsx
 // Update a document
-const { updateDocument } = useDocument('User', 'USER-ID');
+const { updateDocument } = useDocument(docType, documentId);
 
-await updateDocument('User', 'USER-ID', {
+await updateDocument(docType, documentId, {
   score: 0,
 });
+```
 
+```jsx
 
 // Delete a document
-const { deleteDocument } = useDocument('User', 'USER-ID');
+const { deleteDocument } = useDocument(docType, documentId);
 
-await deleteDocument('User', 'USER-ID');
+await deleteDocument(docType, documentId);
 
 ```
 
@@ -91,7 +108,7 @@ import { useEffect } from 'react';
 import { useAuth } from '@rustedcompiler/frappe-hooks';
 
 function MyComponent() {
-  const { loginWithPassword, currentUser } = useAuth();
+  const { loginWithPassword, currentUser , logout } = useAuth();
 
   useEffect(() => {
     console.log(currentUser);
