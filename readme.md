@@ -59,7 +59,7 @@ const { data } = useDocuments({
 
 ```
 
-### Paginating Data
+### Querying Data
 
 ```jsx
 
@@ -67,14 +67,46 @@ const { data } = useDocuments({
 const { data } = useDocuments({
   docType: docType,
   query: {
-    fieldsArray: ['email', 'full_name'],
-    limit_page_length: 40,
-    limit_start: 10,
   },
   enabled: true,
+  filters: [
+      {
+        query: 'email',
+        operand: 'EQ',
+        value: 'email@gmail.com',
+      }
+    ],
+
 });
 
 ```
+
+By default all filters will be using `AND`, In Order to use `OR`
+
+```jsx
+
+const { data } = useDocuments({
+  docType: docType,
+  query: {
+  },
+  enabled: true,
+  filters: [
+      {
+        query: 'email',
+        operand: 'EQ',
+        value: 'email@gmail.com',
+      },
+       {
+        query: 'email',
+        operand: 'EQ',
+        value: 'email@gmail.com',
+      }
+    ],
+    isOR:true
+});
+
+```
+
 
 ### Fetching a Single Document 
 ```jsx

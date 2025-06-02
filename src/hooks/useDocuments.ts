@@ -1,51 +1,51 @@
 import { useEffect, useState } from "react";
-import axios, { CancelTokenSource } from "axios";
 import { useFrappeClient } from "./useFrappeClient";
-import { InputData, UseFetchResult } from "../types";
+import { ApiResponse, InputData, UseFetchResult } from "../types";
 import { listingBuilder } from "../utils/url-builder";
 
-
-
-export function useDocuments<T = any>({ docType, query, enabled = true }: InputData): UseFetchResult<T> {
+export function useDocuments<T = any>({ docType, query, enabled = true, filters, isOR }: InputData): UseFetchResult<T> {
     const [data, setData] = useState<T | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [docTypeUrl, setDocTypeUrl] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null);
-    const { axiosInstance } = useFrappeClient()
+    const { baseUrl } = useFrappeClient()
+    const { initialized } = useFrappeClient()
     useEffect(() => {
-        if (!docType) return;
-
+        if (!docType || !baseUrl) return;
         if (enabled) {
-
-            const source: CancelTokenSource = axios.CancelToken.source();
-
+            const controller = new AbortController();
+            const signal = controller.signal;
             setIsLoading(true);
             setError(null);
             if (query == undefined) {
-                setDocTypeUrl(`/api/resource/${docType}`)
+                setDocTypeUrl(`${baseUrl}/api/resource/${docType}`)
             } else {
-                setDocTypeUrl(listingBuilder(`/api/resource/${docType}`, { limit_page_length: query.limit_page_length, limit_start: query.limit_start, fieldsArray: query.fieldsArray }))
+                setDocTypeUrl(listingBuilder(`${baseUrl}/api/resource/${docType}`, { limit_page_length: query.limit_page_length, limit_start: query.limit_start, fieldsArray: query.fieldsArray }, filters, isOR))
             }
             if (docTypeUrl)
-                axiosInstance?.get<T>(docTypeUrl, { cancelToken: source.token })
-                    .then((res) => setData(res.data))
+                fetch(docTypeUrl, { signal, credentials: "include" })
+                    .then((res) => {
+                        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                        return res.json() as Promise<ApiResponse<any>>;
+                    })
+                    .then((data: { data: any }) => setData(data.data))
                     .catch((err) => {
-                        if (!axios.isCancel(err)) {
+                        if (err.name !== "AbortError") {
                             setError(err.message || "Unknown error");
                         }
                     })
                     .finally(() => {
-                        if (!source.token.reason) {
+                        if (!signal.aborted) {
                             setIsLoading(false);
                         }
                     });
 
             return () => {
-                source.cancel("Request cancelled due to component unmount or docType change.");
+                controller.abort();
             };
         }
 
-    }, [docType, docTypeUrl, enabled, query?.limit_start]);
+    }, [docType, docTypeUrl, enabled, query?.limit_start, initialized]);
 
     return { data, isLoading, error };
 }

@@ -1,77 +1,143 @@
 import { useEffect, useState } from "react";
-import axios, { CancelTokenSource } from "axios";
 import { useFrappeClient } from "./useFrappeClient";
-
-interface UseDocumentResult<T> {
-    data: T | null;
-    isLoading: boolean;
-    error: string | null;
-    updateDocument: (docType: string, documentId: string, data: T) => Promise<any>;
-    createDocument: (docType: string, data: T) => Promise<any>;
-    deleteDocument: (docType: string, documentId: string) => Promise<any>;
-}
+import { UseDocumentResult } from "../types";
 
 export function useDocument<T = any>(docType?: string, documentId?: string, enabled: boolean = true): UseDocumentResult<T> {
     const [data, setData] = useState<T | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const { axiosInstance } = useFrappeClient()
-    const [refetch, setRefetch] = useState(Date.now())
+    const { setUpdate } = useFrappeClient()
+    const { baseUrl } = useFrappeClient()
+    const [re_fetch, setRefetch] = useState(Date.now())
     useEffect(() => {
         if (!docType || !documentId) return;
         if (enabled) {
-            const source: CancelTokenSource = axios.CancelToken.source();
+            const controller = new AbortController();
+            const signal = controller.signal;
             setIsLoading(true);
             setError(null);
-            axiosInstance?.get<T>(`/api/resource/${docType}/${documentId}`, { cancelToken: source.token })
-                .then((res) => setData(res.data))
+            const url = `${baseUrl}/api/resource/${docType}/${documentId}`
+            fetch(url, {
+                signal,
+                credentials: "include",
+            })
+                .then((res) => {
+                    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                    return res.json() as Promise<T>;
+                })
+                .then((data) => setData(data))
                 .catch((err) => {
-                    if (!axios.isCancel(err)) {
+                    if (err.name !== "AbortError") {
                         setError(err.message || "Unknown error");
                     }
                 })
                 .finally(() => {
-                    if (!source.token.reason) {
+                    if (!signal.aborted) {
                         setIsLoading(false);
                     }
                 });
 
             return () => {
-                source.cancel("Request cancelled due to component unmount or docType change.");
+                controller.abort();
             };
         }
 
-    }, [docType, enabled, refetch, documentId]);
+    }, [docType, enabled, re_fetch, documentId]);
 
+    async function refetch() {
+        setRefetch(Date.now())
+    }
     async function updateDocument(docType: string, documentId: string, updated_data: T) {
-        const response = await axiosInstance?.put(`/api/resource/${docType}/${documentId}`, updated_data)
-        if (response?.data) {
-            setRefetch(Date.now())
-            return response.data
-        } else {
-            return null
-        }
+        const url = `${baseUrl}/api/resource/${docType}/${documentId}`
+        const { signal } = new AbortController()
+        fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            signal,
+            body: JSON.stringify(updated_data),
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+            })
+            .then(() => {
+                setUpdate()
+            })
+            .catch((err) => {
+                if (err.name !== "AbortError") {
+                    setError(err.message || "Unknown error");
+                }
+            })
+            .finally(() => {
+                if (!signal.aborted) {
+                    setIsLoading(false);
+                }
+            });
     }
 
     async function createDocument(docType: string, data: T) {
-        const response = await axiosInstance?.post(`/api/resource/${docType}`, data)
-        if (response?.data) {
-            return response.data
-        } else {
-            return null
-        }
+        const { signal } = new AbortController();
+        const url = `${baseUrl}/api/resource/${docType}`
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            signal,
+            body: JSON.stringify(data),
+        }).then((res) => {
+            if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+            return res.json()
+        }).then((data) => {
+            setUpdate()
+            return data.data
+        })
+            .catch((err) => {
+                if (err.name !== "AbortError") {
+                    setError(err.message || "Unknown error");
+                }
+            })
+            .finally(() => {
+                if (!signal.aborted) {
+                    setIsLoading(false);
+                }
+            });
+
     }
 
     async function deleteDocument(docType: string, documentId: string) {
-        const response = await axiosInstance?.delete(`/api/resource/${docType}/${documentId}`)
-        if (response?.data) {
-            return response.data
-        } else {
-            return null
-        }
+        const url = `${baseUrl}/api/resource/${docType}/${documentId}`
+        const { signal } = new AbortController()
+        fetch(url, {
+            method: "DELETE",
+            credentials: "include",
+            signal,
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+                return res.json();
+            })
+            .then((data) => {
+                setUpdate()
+                console.log(data);
+            })
+            .catch((err) => {
+                if (err.name !== "AbortError") {
+                    setError(err.message || "Unknown error");
+                }
+            })
+            .finally(() => {
+                if (!signal.aborted) {
+                    setIsLoading(false);
+                }
+            });
+
     }
 
 
 
-    return { data, isLoading, error, updateDocument, deleteDocument, createDocument };
+    return { data, isLoading, error, updateDocument, deleteDocument, createDocument, refetch };
 }
