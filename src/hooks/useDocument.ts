@@ -11,7 +11,7 @@ interface UseDocumentResult<T> {
     deleteDocument: (docType: string, documentId: string) => Promise<any>;
 }
 
-export function useDocument<T = any>(docType: string, documentId: string, enabled: boolean = true): UseDocumentResult<T> {
+export function useDocument<T = any>(docType?: string, documentId?: string, enabled: boolean = true): UseDocumentResult<T> {
     const [data, setData] = useState<T | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

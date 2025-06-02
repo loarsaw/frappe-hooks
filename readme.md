@@ -1,5 +1,7 @@
 # @rustedcompiler/frappe-hooks
 
+[![npm](https://img.shields.io/npm/dw/@rustedcompiler/frappe-hooks)](https://www.npmjs.com/package/@rustedcompiler/frappe-hooks)
+
 A lightweight React.js wrapper for the [Frappe REST API](https://docs.frappe.io/framework/user/en/api/rest), enabling easy integration with Frappe backend in your React applications.
 
 ## ✅ Features
@@ -85,7 +87,7 @@ const { data } = useDocument(docType, documentId);
 
 ```jsx
 // Update a document
-const { updateDocument } = useDocument(docType, documentId);
+const { updateDocument } = useDocument();
 
 await updateDocument(docType, documentId, {
   score: 0,
@@ -95,7 +97,7 @@ await updateDocument(docType, documentId, {
 ```jsx
 
 // Delete a document
-const { deleteDocument } = useDocument(docType, documentId);
+const { deleteDocument } = useDocument();
 
 await deleteDocument(docType, documentId);
 
