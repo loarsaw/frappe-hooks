@@ -2,6 +2,9 @@
 
 [![npm](https://img.shields.io/npm/dw/@rustedcompiler/frappe-hooks)](https://www.npmjs.com/package/@rustedcompiler/frappe-hooks)
 
+![bundle size](https://img.shields.io/bundlephobia/minzip/<@rustedcompiler/frappe-hooks)
+
+
 A lightweight React.js wrapper for the [Frappe REST API](https://docs.frappe.io/framework/user/en/api/rest), enabling easy integration with Frappe backend in your React applications.
 
 ## ✅ Features
