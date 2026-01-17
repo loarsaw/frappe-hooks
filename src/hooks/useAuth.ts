@@ -25,10 +25,10 @@ export function useAuth() {
         usr: username,
         pwd: password,
       });
-      
+
       // Update context with credentials
       await loginWithPassword(username, password);
-      
+
       return result;
     } catch (err) {
       setError(err as Error);
@@ -45,10 +45,10 @@ export function useAuth() {
 
     try {
       loginWithToken(apiKey, apiSecret);
-      
+
       // Optional: Verify token by making a test API call
       await client.get('/api/method/frappe.auth.get_logged_user');
-      
+
       return { success: true };
     } catch (err) {
       setError(err as Error);
@@ -81,10 +81,10 @@ export function useAuth() {
       } catch {
         // Ignore logout API errors
       }
-      
+
       // Clear credentials from context
       logoutManager();
-      
+
       return { success: true };
     } catch (err) {
       setError(err as Error);
@@ -104,14 +104,14 @@ export function useAuth() {
     }
   };
 
-  return { 
+  return {
     login,
     loginWithAPIToken,
     dynamicLogin,
-    logout, 
+    logout,
     getCurrentUser,
-    isLoading, 
+    isLoading,
     error,
-    isAuthenticated 
+    isAuthenticated,
   };
 }

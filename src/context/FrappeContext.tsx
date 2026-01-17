@@ -32,11 +32,11 @@ interface FrappeProviderProps {
   enableDynamicAuth?: boolean; // New feature flag
 }
 
-export const FrappeProvider: React.FC<FrappeProviderProps> = ({ 
-  children, 
-  options: initialOptions, 
+export const FrappeProvider: React.FC<FrappeProviderProps> = ({
+  children,
+  options: initialOptions,
   cacheTTL = 300000,
-  enableDynamicAuth = false 
+  enableDynamicAuth = false,
 }) => {
   const [client, setClient] = useState(() => new FrappeClient(initialOptions));
   const [cache] = useState(() => new CacheManager(cacheTTL));
@@ -44,27 +44,34 @@ export const FrappeProvider: React.FC<FrappeProviderProps> = ({
     !!(initialOptions.token || (initialOptions.username && initialOptions.password))
   );
 
-  const updateCredentials = useCallback((credentials: Partial<FrappeClientOptions>) => {
-    if (!enableDynamicAuth) {
-      console.warn('Dynamic authentication is not enabled. Set enableDynamicAuth={true} on FrappeProvider');
-      return;
-    }
+  const updateCredentials = useCallback(
+    (credentials: Partial<FrappeClientOptions>) => {
+      if (!enableDynamicAuth) {
+        console.warn(
+          'Dynamic authentication is not enabled. Set enableDynamicAuth={true} on FrappeProvider'
+        );
+        return;
+      }
 
-    const newOptions = {
-      ...initialOptions,
-      ...credentials
-    };
+      const newOptions = {
+        ...initialOptions,
+        ...credentials,
+      };
 
-    setClient(new FrappeClient(newOptions));
-    setIsAuthenticated(!!(newOptions.token || (newOptions.username && newOptions.password)));
-    
-    // Clear cache when credentials change
-    cache.clear();
-  }, [initialOptions, enableDynamicAuth, cache]);
+      setClient(new FrappeClient(newOptions));
+      setIsAuthenticated(!!(newOptions.token || (newOptions.username && newOptions.password)));
+
+      // Clear cache when credentials change
+      cache.clear();
+    },
+    [initialOptions, enableDynamicAuth, cache]
+  );
 
   const clearCredentials = useCallback(() => {
     if (!enableDynamicAuth) {
-      console.warn('Dynamic authentication is not enabled. Set enableDynamicAuth={true} on FrappeProvider');
+      console.warn(
+        'Dynamic authentication is not enabled. Set enableDynamicAuth={true} on FrappeProvider'
+      );
       return;
     }
 
@@ -81,24 +88,26 @@ export const FrappeProvider: React.FC<FrappeProviderProps> = ({
     isAuthenticated,
   };
 
-  return (
-    <FrappeContext.Provider value={value}>
-      {children}
-    </FrappeContext.Provider>
-  );
+  return <FrappeContext.Provider value={value}>{children}</FrappeContext.Provider>;
 };
 
 // New hook for managing authentication
 export function useAuthManager() {
   const { updateCredentials, clearCredentials, isAuthenticated } = useFrappe();
 
-  const loginWithPassword = useCallback(async (username: string, password: string) => {
-    updateCredentials({ username, password, useToken: false });
-  }, [updateCredentials]);
+  const loginWithPassword = useCallback(
+    async (username: string, password: string) => {
+      updateCredentials({ username, password, useToken: false });
+    },
+    [updateCredentials]
+  );
 
-  const loginWithToken = useCallback((apiKey: string, apiSecret: string) => {
-    updateCredentials({ token: `${apiKey}:${apiSecret}`, useToken: true });
-  }, [updateCredentials]);
+  const loginWithToken = useCallback(
+    (apiKey: string, apiSecret: string) => {
+      updateCredentials({ token: `${apiKey}:${apiSecret}`, useToken: true });
+    },
+    [updateCredentials]
+  );
 
   const logout = useCallback(() => {
     clearCredentials();

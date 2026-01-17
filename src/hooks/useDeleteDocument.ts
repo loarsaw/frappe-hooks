@@ -1,6 +1,9 @@
 import { useMutation, MutationOptions } from './useMutation';
 
-export interface UseDeleteDocumentOptions extends Omit<MutationOptions<void, { docType: string; documentId: string }>, 'invalidate'> {
+export interface UseDeleteDocumentOptions extends Omit<
+  MutationOptions<void, { docType: string; documentId: string }>,
+  'invalidate'
+> {
   invalidate?: string[] | string | RegExp;
 }
 

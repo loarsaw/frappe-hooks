@@ -1,3 +1,13 @@
+# Frappe Hooks
+
+[![npm version](https://badge.fury.io/js/@rustedcompiler%2Ffrappe-hooks.svg)](https://www.npmjs.com/package/@rustedcompiler/frappe-hooks)
+[![CI](https://github.com/yourusername/frappe-hooks/workflows/CI/badge.svg)](https://github.com/yourusername/frappe-hooks/actions)
+[![codecov](https://codecov.io/gh/yourusername/frappe-hooks/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/frappe-hooks)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+React hooks library for Frappe/ERPNext integration.
+
+
 # Dynamic Authentication - Usage Guide
 
 This guide covers the dynamic authentication feature that allows users to provide credentials at runtime.

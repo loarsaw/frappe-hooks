@@ -1,6 +1,9 @@
 import { useMutation, MutationOptions } from './useMutation';
 
-export interface UseCreateDocumentOptions<T> extends Omit<MutationOptions<T, { docType: string; data: Partial<T> }>, 'invalidate'> {
+export interface UseCreateDocumentOptions<T> extends Omit<
+  MutationOptions<T, { docType: string; data: Partial<T> }>,
+  'invalidate'
+> {
   invalidate?: string[] | string | RegExp;
 }
 
