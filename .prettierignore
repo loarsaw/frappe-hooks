@@ -1,0 +1,11 @@
+node_modules
+dist
+coverage
+*.md
+package-lock.json
+.githubnode_modules
+dist
+coverage
+*.md
+package-lock.json
+.github

@@ -1,17 +1,11 @@
-import { useEffect } from "react"
-import { getUtils } from ".."
+import { useFrappeContext } from '../context/FrappeContext';
+import { getUtils } from '../utils';
 
 export function useFrappeClient() {
-    const { initialized, setUpdate, baseUrl } = getUtils()
-    useEffect(() => {
-        if (baseUrl == null || !initialized) {
-            throw new Error("Seems like there no Frappe Instance Existing")
+  const { client } = useFrappeContext();
 
-        }
-    }, [initialized])
-    return {
-        setUpdate,
-        initialized,
-        baseUrl
-    }
+  return {
+    client,
+    ...getUtils(client),
+  };
 }
