@@ -1,93 +1,43 @@
-import { useEffect, useState } from "react"
-import { useFrappeClient } from "./useFrappeClient"
+import { useState } from 'react';
+import { useFrappeContext } from '../context/FrappeContext';
 
 export function useAuth() {
-    const [currentUser, setCurrentUser] = useState<string | null>()
-    const [attemptSuccess, setAttemptSuccess] = useState<boolean>(false)
-    const { baseUrl } = useFrappeClient()
-    useEffect(() => {
-        getCurrentUser()
-    }, [attemptSuccess])
+  const { client } = useFrappeContext();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
-    async function getCurrentUser() {
-        const { signal } = new AbortController()
-        const url = `${baseUrl}/api/method/frappe.auth.get_logged_user`
-        fetch(url, {
-            signal,
-            credentials: "include",
-        })
-            .then((res) => {
-                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-                return res.json() as Promise<any>;
-            })
-            .then((data) => {
-                setCurrentUser(data.message)
-            })
-            .catch((err) => {
-                if (err.name !== "AbortError") {
-                }
-            })
-            .finally(() => {
-                if (!signal.aborted) {
-                }
-            });
+  const login = async (username: string, password: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await client.post('/api/method/login', {
+        usr: username,
+        pwd: password,
+      });
+      return result;
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
-    async function logout() {
-        const { signal } = new AbortController()
-        const url = `${baseUrl}/api/method/logout`
-        fetch(url, {
-            signal,
-            credentials: "include",
-        })
-            .then((res) => {
-                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-                return res.json() as Promise<any>;
-            })
-            .then((data) => {
-                setCurrentUser(null)
-            })
-            .catch((err) => {
-                if (err.name !== "AbortError") {
+  };
 
-                }
-            })
-            .finally(() => {
-                if (!signal.aborted) {
+  const logout = async () => {
+    setIsLoading(true);
+    setError(null);
 
-                }
-            });
+    try {
+      const result = await client.post('/api/method/logout');
+      return result;
+    } catch (err) {
+      setError(err as Error);
+      throw err;
+    } finally {
+      setIsLoading(false);
     }
-    async function loginWithPassword(email: string, password: string) {
+  };
 
-        const { signal } = new AbortController();
-        const url = `${baseUrl}/api/method/login`
-        fetch(url, {
-            credentials: "include",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            signal,
-            body: JSON.stringify({
-                usr: email,
-                pwd: password
-            }),
-        }).then((res) => {
-            if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-            return res.json()
-        }).catch((err) => {
-            if (err.name !== "AbortError") {
-
-            }
-        })
-            .finally(() => {
-                if (!signal.aborted) {
-
-                }
-            });
-
-    }
-
-
-    return { loginWithPassword, currentUser, logout }
+  return { login, logout, isLoading, error };
 }
