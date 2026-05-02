@@ -1,7 +1,3 @@
-type CacheKey = string;
-type CacheListener = () => void;
-type CacheData = { data: any; timestamp: number };
-
 export class CacheManager {
   private cache: Map<string, { data: any; timestamp: number }> = new Map();
   private ttl: number;

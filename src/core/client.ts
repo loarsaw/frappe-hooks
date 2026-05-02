@@ -15,19 +15,21 @@ export class FrappeClient {
 
   async request<T>(config: RequestConfig): Promise<T> {
     const url = `${this.baseUrl}${config.url}`;
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      ...config.headers,
-    };
+    const headers: Record<string, string> = { ...config.headers };
 
     if (this.token) {
       headers['Authorization'] = `token ${this.token}`;
     }
 
+    const isFormData = config.data instanceof FormData;
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     const response = await fetch(url, {
       method: config.method,
       headers,
-      body: config.data ? JSON.stringify(config.data) : undefined,
+      body: config.data ? (isFormData ? config.data : JSON.stringify(config.data)) : undefined,
     });
 
     if (!response.ok) {

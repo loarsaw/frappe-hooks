@@ -29,7 +29,7 @@ interface FrappeProviderProps {
   children: ReactNode;
   options: FrappeClientOptions;
   cacheTTL?: number;
-  enableDynamicAuth?: boolean; // New feature flag
+  enableDynamicAuth?: boolean;
 }
 
 export const FrappeProvider: React.FC<FrappeProviderProps> = ({
@@ -90,33 +90,3 @@ export const FrappeProvider: React.FC<FrappeProviderProps> = ({
 
   return <FrappeContext.Provider value={value}>{children}</FrappeContext.Provider>;
 };
-
-// New hook for managing authentication
-export function useAuthManager() {
-  const { updateCredentials, clearCredentials, isAuthenticated } = useFrappe();
-
-  const loginWithPassword = useCallback(
-    async (username: string, password: string) => {
-      updateCredentials({ username, password, useToken: false });
-    },
-    [updateCredentials]
-  );
-
-  const loginWithToken = useCallback(
-    (apiKey: string, apiSecret: string) => {
-      updateCredentials({ token: `${apiKey}:${apiSecret}`, useToken: true });
-    },
-    [updateCredentials]
-  );
-
-  const logout = useCallback(() => {
-    clearCredentials();
-  }, [clearCredentials]);
-
-  return {
-    loginWithPassword,
-    loginWithToken,
-    logout,
-    isAuthenticated,
-  };
-}

@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useFrappeContext } from '../context/FrappeContext';
 
-export function useDocument<T = any>(doctype: string, name: string) {
+// expand_links
+// Expand all link fields by sending a GET request to /api/resource/:doctype/:name?expand_links=True.
+export function useDocument<T = any>(doctype: string, name: string, expand_links: boolean = false) {
   const { client, cache } = useFrappeContext();
   const [data, setData] = useState<T | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!!(doctype && name));
+
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchDocument = async () => {
-      const cacheKey = `doc:${doctype}:${name}`;
+      const cacheKey = `doc:${doctype}:${name}?expand_links=${expand_links}`;
       const cached = cache.get(cacheKey);
 
       if (cached) {
@@ -30,9 +33,12 @@ export function useDocument<T = any>(doctype: string, name: string) {
       }
     };
 
-    if (doctype && name) {
-      fetchDocument();
+    if (!doctype || !name) {
+      setIsLoading(false);
+      return;
     }
+
+    fetchDocument();
   }, [doctype, name, client, cache]);
 
   return { data, isLoading, error };

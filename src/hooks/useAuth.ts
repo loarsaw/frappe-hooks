@@ -1,6 +1,7 @@
 // src/hooks/useAuth.ts
 import { useState } from 'react';
-import { useFrappeContext, useAuthManager } from '../context/FrappeContext';
+import { useFrappeContext } from '../context/FrappeContext';
+import { useAuthManager } from './useAuthManager';
 
 export interface LoginCredentials {
   username?: string;
