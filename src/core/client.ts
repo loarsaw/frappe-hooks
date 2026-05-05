@@ -29,6 +29,7 @@ export class FrappeClient {
     const response = await fetch(url, {
       method: config.method,
       headers,
+      credentials: 'include',
       body: config.data ? (isFormData ? config.data : JSON.stringify(config.data)) : undefined,
     });
 

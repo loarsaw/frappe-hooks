@@ -6,3 +6,4 @@ export * from './useDocuments';
 export * from './useFrappeClient';
 export * from './useMutation';
 export * from './useUpdateDocument';
+export * from './useUploadFile';

@@ -19,6 +19,8 @@ export interface QueryOptions {
   filters?: Filter[];
   limit_start?: number;
   limit_page_length?: number;
+  // Setting OR filter
+  is_or?: boolean;
   order_by?: string;
   // You can specify which fields to expand in the expand param
   // GET /api/resource/:doctype?expand=["priority"]

@@ -21,7 +21,13 @@ export function useDocuments<T = any>(doctype: string, options?: QueryOptions) {
     let isCancelled = false;
 
     const fetchDocuments = async () => {
-      const url = buildQueryUrl(`/api/resource/${doctype}`, options, options?.filters);
+      const url = buildQueryUrl(
+        `/api/resource/${doctype}`,
+        options,
+        options?.filters,
+        // or filter
+        options?.is_or
+      );
       const cacheKey = `docs:${doctype}:${optionsKey}`;
       const cached = cache.get(cacheKey);
 

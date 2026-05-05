@@ -1,6 +1,11 @@
 import { QueryOptions, Filter } from '../types';
 
-export function buildUrl(baseUrl: string, options?: QueryOptions, filters?: Filter[]): string {
+export function buildUrl(
+  baseUrl: string,
+  options?: QueryOptions,
+  filters?: Filter[],
+  is_or?: boolean
+): string {
   const params = new URLSearchParams();
 
   if (options?.fields) {
@@ -8,7 +13,11 @@ export function buildUrl(baseUrl: string, options?: QueryOptions, filters?: Filt
   }
 
   if (filters) {
-    params.append('filters', JSON.stringify(filters));
+    if (is_or) {
+      params.append('or_filters', JSON.stringify(filters));
+    } else {
+      params.append('filters', JSON.stringify(filters));
+    }
   }
 
   if (options?.limit_page_length) {
@@ -23,9 +32,20 @@ export function buildUrl(baseUrl: string, options?: QueryOptions, filters?: Filt
     params.append('order_by', options.order_by);
   }
 
+  if (options?.expand) {
+    params.append('expand', JSON.stringify(options.expand));
+  }
+
+  if (options?.as_dict === false) {
+    params.append('as_dict', '0');
+  }
+
+  if (options?.debug) {
+    params.append('debug', '1');
+  }
+
   const queryString = params.toString();
   return queryString ? `${baseUrl}?${queryString}` : baseUrl;
 }
 
-// Alias for compatibility
 export const buildQueryUrl = buildUrl;
